@@ -4,7 +4,7 @@ Shell script to install a [CaSaX Masternode](https://casax.cc/) on a Linux serve
 ***
 ## Installation:
 ```
-wget https://raw.githubusercontent.com/CaSaX/masternodeinstall/master/csx.sh
+wget https://raw.githubusercontent.com/CaSaXV2/masternodeinstall/master/csx.sh
 sudo chmod +x csx.sh && sudo bash csx.sh
 ```
 ***
