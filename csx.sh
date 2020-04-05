@@ -230,11 +230,11 @@ fi
 
 function detect_ubuntu() {
  if [[ $(lsb_release -d) == *16.04* ]]; then
-   UBUNTU_VERSION=16
+   UBUNTU_VERSION=18
  elif [[ $(lsb_release -d) == *14.04* ]]; then
-   UBUNTU_VERSION=14
+   UBUNTU_VERSION=16
 else
-   echo -e "${RED}You are not running Ubuntu 14.04 or 16.04 Installation is cancelled.${NC}"
+   echo -e "${RED}You are not running Ubuntu 16.04 or 18.04 Installation is cancelled.${NC}"
    exit 1
 fi
 }
@@ -253,9 +253,37 @@ fi
 }
 
 function prepare_system() {
-echo -e "Prepare the system to install ${GREEN}$COIN_NAME${NC} master node."
+echo -e "Configuring system to install ${YELLOW}$COIN_NAME${NC} masternode. Please wait, it may take some time for the complete installation get finish."
 apt-get update >/dev/null 2>&1
-apt-get install -y wget curl binutils >/dev/null 2>&1
+DEBIAN_FRONTEND=noninteractive apt-get update > /dev/null 2>&1
+DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y -qq upgrade >/dev/null 2>&1
+apt install -y software-properties-common >/dev/null 2>&1
+echo -e "${GREEN}Adding bitcoin PPA repository"
+apt-add-repository -y ppa:bitcoin/bitcoin >/dev/null 2>&1
+echo -e "Installing required packages, it may take some time to finish.${NC}"
+apt-get update >/dev/null 2>&1
+apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" make software-properties-common \
+build-essential libtool autoconf libssl-dev libboost-dev libboost-chrono-dev libboost-filesystem-dev libboost-program-options-dev \
+libboost-system-dev libboost-test-dev libboost-thread-dev sudo automake git wget curl libdb4.8-dev bsdmainutils libdb4.8++-dev \
+libminiupnpc-dev libgmp3-dev ufw pkg-config libevent-dev>/dev/null 2>&1
+if [ "$?" -gt "0" ];
+  then
+    echo -e "${RED}Not all required packages were installed properly. Try to install them manually by running the following commands:${NC}\n"
+    echo "apt-get update"
+	echo "apt -y install libzmq3-dev3-dev"
+    echo "apt -y install software-properties-common"
+    echo "apt-add-repository -y ppa:bitcoin/bitcoin"
+    echo "apt-get update"
+    echo "apt install -y make build-essential libtool software-properties-common autoconf libssl-dev libboost-dev libboost-chrono-dev libboost-filesystem-dev \
+libboost-program-options-dev libboost-system-dev libboost-test-dev libboost-thread-dev sudo automake git curl libdb4.8-dev \
+bsdmainutils libdb4.8++-dev libminiupnpc-dev libgmp3-dev ufw fail2ban pkg-config libevent-dev libzmq3-dev build-essential libssl-dev \
+libboost-all-dev libqrencode-dev pkg-config libminiupnpc-dev qt5-default qttools5-dev-tools libgmp3-dev libdb4.8-dev libdb4.8++-dev \
+autoconf libtool autotools-dev pkg-config libssl-dev libboost-all-dev autoconf automake libzmq3-dev libminiupnpc-dev libssl-dev \
+libevent-dev libgmp-dev openssl build-essential aptitude libdb4.8++-dev"
+ exit 1
+fi
+
+clear
 }
 
 function important_information() {
